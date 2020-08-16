@@ -46,7 +46,6 @@ rescue StandardError => e
     statusCode: 400,
     body: {
       message: e.message,
-      backtrace: e.backtrace,
     }.to_json
   }
 end
