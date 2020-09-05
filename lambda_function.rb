@@ -20,7 +20,7 @@ require_relative "utils/config"
 # }
 
 def lambda_handler(event:, context:)
-  event = event.with_indifferent_access
+  event = event['body'].with_indifferent_access
   config = Config.load("config.yml")
 
   website_repo = Github.new(access_token: config.access_token,
@@ -36,6 +36,7 @@ def lambda_handler(event:, context:)
 
   {
     statusCode: 200,
+    headers: {'Content-Type': 'application/json'},
     body: {
       message: commit_message,
     }.to_json
@@ -44,6 +45,7 @@ def lambda_handler(event:, context:)
 rescue StandardError => e
   {
     statusCode: 400,
+    headers: {'Content-Type': 'application/json'},
     body: {
       message: e.message,
     }.to_json
