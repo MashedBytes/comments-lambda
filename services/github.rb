@@ -9,7 +9,7 @@ class Github
 
     def initialize(access_token:, ref:, repo:, comments_file_path:)
         @client = Octokit::Client.new(access_token: access_token)
-        @ref = ref || "heads/master"
+        @ref = "heads/#{ ref || 'master' }"
         @repo = repo
         @comments_file_path = comments_file_path
     end

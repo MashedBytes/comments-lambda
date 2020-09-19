@@ -20,15 +20,19 @@ require_relative "utils/config"
 # }
 
 def lambda_handler(event:, context:)
-  event = event['body'].with_indifferent_access
+  environment = ''
+  environment = event['path'].tr('/','')
+
+  params = JSON.parse(event['body']).with_indifferent_access
+
   config = Config.load("config.yml")
 
   website_repo = Github.new(access_token: config.access_token,
-                      ref: event["branch"],
+                      ref: params["branch"],
                       repo: config.repo,
                       comments_file_path: config.comments_file_path)
 
-  comment = Comment.new(**event)
+  comment = Comment.new(**params)
   website_repo.comments << comment
 
   commit_message = CommentPresenter.commit_message_of comment
@@ -48,6 +52,7 @@ rescue StandardError => e
     headers: {'Content-Type': 'application/json'},
     body: {
       message: e.message,
-    }.to_json
+      backtrace: (e.backtrace if environment == 'staging'),
+    }.compact.to_json
   }
 end
