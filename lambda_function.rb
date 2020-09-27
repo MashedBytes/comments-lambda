@@ -43,6 +43,7 @@ def lambda_handler(event:, context:)
     headers: {'Content-Type': 'application/json'},
     body: {
       message: commit_message,
+      comment: comment.as_json,
     }.to_json
   }
 
@@ -53,6 +54,7 @@ rescue StandardError => e
     body: {
       message: e.message,
       backtrace: (e.backtrace if environment == 'staging'),
+      comment: comment.as_json,
     }.compact.to_json
   }
 end
